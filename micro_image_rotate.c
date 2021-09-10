@@ -2,8 +2,8 @@
 #include "micro_image_rotate.h"
 
 #define FP_BITS 16
-#define FP_BITS_ONE (1 << FP_BITS)
-#define FP_BITS_MASK ((1 << FP_BITS)-1)
+#define FP_ONE (1 << FP_BITS)
+#define FP_FRAC_MASK ((1 << FP_BITS)-1)
 
 inline uint32_t interpolate_color_values(uint32_t color1, uint32_t color2, int32_t fp_frac, int colors_count)
 {
@@ -65,10 +65,10 @@ void show_rotated_image_line(
 	float src_x_f = - dst_width/2 * cos_a - (dst_y - dst_height/2) * sin_a + image_center_x;
 	float src_y_f = (dst_y - dst_height/2) * cos_a - dst_width/2 * sin_a + image_center_y;
 
-	int32_t src_x = src_x_f * FP_BITS_ONE;
-	int32_t src_y = src_y_f * FP_BITS_ONE;
-	const int32_t src_dx = cos_a * FP_BITS_ONE;
-	const int32_t src_dy = sin_a * FP_BITS_ONE;
+	int32_t src_x = src_x_f * FP_ONE;
+	int32_t src_y = src_y_f * FP_ONE;
+	const int32_t src_dx = cos_a * FP_ONE;
+	const int32_t src_dy = sin_a * FP_ONE;
 	const int32_t max_image_x = image_width - 1;
 	const int32_t max_image_y = image_height - 1;
 	const int32_t max_src_x = max_image_x << FP_BITS;
@@ -100,10 +100,10 @@ void show_rotated_image_line(
 				const uint32_t color01 = (hit_h0 && hit_v1) ? get_pixel_fun(get_pixel_cookie, x, y + 1) : outside_color;
 				const uint32_t color11 = (hit_h1 && hit_v1) ? get_pixel_fun(get_pixel_cookie, x + 1, y + 1) : outside_color;
 
-				const uint32_t color0 = interpolate_color_values(color00, color10, src_x & FP_BITS_MASK, colors_count);
-				const uint32_t color1 = interpolate_color_values(color01, color11, src_x & FP_BITS_MASK, colors_count);
+				const uint32_t color0 = interpolate_color_values(color00, color10, src_x & FP_FRAC_MASK, colors_count);
+				const uint32_t color1 = interpolate_color_values(color01, color11, src_x & FP_FRAC_MASK, colors_count);
 
-				dst_color = interpolate_color_values(color0, color1, src_y & FP_BITS_MASK, colors_count);
+				dst_color = interpolate_color_values(color0, color1, src_y & FP_FRAC_MASK, colors_count);
 			}
 		}
 		set_pixel_fun(set_pixel_cookie, x, dst_color);
