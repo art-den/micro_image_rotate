@@ -74,7 +74,7 @@ void show_rotated_image_line(
 	const int32_t max_src_x = max_image_x << FP_BITS;
 	const int32_t max_src_y = max_image_y << FP_BITS;
 
-	for (int32_t x = 0; x <= dst_width; x++)
+	for (int32_t x = 0; x < dst_width; x++)
 	{
 		uint32_t dst_color = outside_color;
 
